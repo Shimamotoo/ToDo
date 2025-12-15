@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
     /**
      * Query para ser executada dentro do banco
      *  */     
-    const sqlQuery = "SELECT * FROM tasks";
+    const sqlQuery = "SELECT * FROM tasks ORDER BY criado DESC";
 
     //db.query envia a query para o banco de dados
     //Método assíncrono, envia a query e espera o retorno dela
@@ -63,6 +63,78 @@ router.post("/", (req, res) => {
       id:result.insertId,
       titulo,
       completo: false,
+    });
+  });
+});
+
+
+router.put("/:id",(req, res) => {
+
+  //Passa o id na URL não no body, então envia com params
+  const { id } = req.params;
+
+  //Desestrutura o req.body e pegando apenas o campo titulo e completo
+  const { titulo, completo } = req.body;
+
+  //Caso o titulo não tenha sido informado retorna um erro
+  if(!titulo) {
+    return res.status(400).json({ erro: "Título da tarefa é obrigatório." });
+  }
+  
+  //Variavel que contem a query que sera enviada ao banco
+  const sqlQuery = `
+    UPDATE tasks
+    SET titulo = ?, completo = ?
+    WHERE id = ?
+  `;
+
+  //Envia a query para o banco de dados
+  //Envia o valor do titulo
+  //Envia o valor do completo
+  //Envia o valor do id
+  //Método assíncrono, envia a query e espera o retorno dela
+  db.query(sqlQuery, [titulo, completo, id], (err, result) => {
+
+    //(err) = caso de erro, console.error(err) faz o console do erro
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ erro: "Erro ao atualizar tarefa" });
+    }
+
+    //Caso nenhuma linha tenha sido afetada(ou seja ninguem foi alterado) retorna um erro ao cliete
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ erro: "Tarefa não encontrada" });
+    }
+
+    //Retorna ao cliente o id e os campos alterados
+    res.json({
+      id,
+      titulo,
+      completo,
+    });    
+  });
+});
+
+router.delete("/:id",(req, res) => {
+  const { id } = req.params;
+
+  const sqlQuery = `
+    DELETE FROM tasks
+    WHERE id = ?
+  `;
+
+  db.query(sqlQuery, [id],(err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ erro: "Erro ao deletar tarefa" });
+    }  
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ erro: "Tarefa não encontrada" });
+    }    
+    
+    res.json({
+      message: `Tarefa com id ${id} foi deletada com sucesso`
     });
   });
 });
