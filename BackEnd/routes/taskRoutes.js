@@ -12,7 +12,9 @@ import db from "../database/db.js";
 * router.post /
 */
 const router = Router();
- 
+
+
+//**LISTAR TAREFAS
 router.get("/", (req, res) => {
     /**
      * Query para ser executada dentro do banco
@@ -34,6 +36,7 @@ router.get("/", (req, res) => {
 });
 
 
+//**ADICIONAR TAREFAS
 router.post("/", (req, res) => {
 
   //Desestrutura o req.body e pegando apenas o campo titulo
@@ -68,6 +71,7 @@ router.post("/", (req, res) => {
 });
 
 
+//**ALTERAR TAREFAS
 router.put("/:id",(req, res) => {
 
   //Passa o id na URL não no body, então envia com params
@@ -80,6 +84,8 @@ router.put("/:id",(req, res) => {
   if(!titulo) {
     return res.status(400).json({ erro: "Título da tarefa é obrigatório." });
   }
+
+  const completoValue = completo ? 1 : 0;
   
   //Variavel que contem a query que sera enviada ao banco
   const sqlQuery = `
@@ -93,7 +99,7 @@ router.put("/:id",(req, res) => {
   //Envia o valor do completo
   //Envia o valor do id
   //Método assíncrono, envia a query e espera o retorno dela
-  db.query(sqlQuery, [titulo, completo, id], (err, result) => {
+  db.query(sqlQuery, [titulo, completoValue, id], (err, result) => {
 
     //(err) = caso de erro, console.error(err) faz o console do erro
     if (err) {
@@ -110,11 +116,13 @@ router.put("/:id",(req, res) => {
     res.json({
       id,
       titulo,
-      completo,
+      completo: Boolean(completoValue),
     });    
   });
 });
 
+
+//**DELETAR TAREFAS
 router.delete("/:id",(req, res) => {
   const { id } = req.params;
 
