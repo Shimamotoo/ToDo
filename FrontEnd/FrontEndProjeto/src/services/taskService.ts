@@ -22,7 +22,7 @@ export const taskService = {
     return response.data;
   },
 
-  remove: async (id: number): Promise<void> => {
+  delete: async (id: number): Promise<void> => {
     await api.delete(`/tasks/${id}`);
   },
 };
