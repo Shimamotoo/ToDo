@@ -86,6 +86,14 @@ function App() {
 
   // Função responsável deletar as tarefas
   const handleDelete = async (id: number) => {
+    // Abre um popup de confirmação
+    const confirmed = window.confirm(
+      "Tem certeza que deseja excluir esta tarefa?"
+    );
+
+    // Se o usuário clicar em "Cancelar"
+    if (!confirmed) return;
+
     try {
       //Ao clicar no botão "Deletar", recebe o id da tarefa via onClick
       //envia esse id para o backend para remover a tarefa do banco de dados
@@ -108,12 +116,20 @@ function App() {
 
   //Quando loading não for mais true, renderiza esse trecho
   return (
-    <div className="min-h-screen p-6 bg-gray-300">
-      <h1 className="mb-4 text-3xl font-bold text-blue-600">Minhas tarefas</h1>
+    <div className="flex justify-center min-h-screen p-6 font-sans bg-gray-300">
+      <div className="w-full max-w-3xl p-8 bg-white shadow-lg rounded-2xl">
+        <h1 className="mb-4 text-2xl font-bold text-center text-gray-800 ">
+          ✅ Minhas Tarefas
+        </h1>
 
-      <TaskForm onCreate={handleCreate} loading={creating} />
+        <TaskForm onCreate={handleCreate} loading={creating} />
 
-      <TaskList tasks={tasks} onToggle={handleToggle} onDelete={handleDelete} />
+        <TaskList
+          tasks={tasks}
+          onToggle={handleToggle}
+          onDelete={handleDelete}
+        />
+      </div>
     </div>
   );
 }

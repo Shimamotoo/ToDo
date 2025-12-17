@@ -33,15 +33,15 @@ export function TaskForm({ onCreate, loading }: TaskFormProps) {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         placeholder="Nova tarefa..."
-        className="flex-1 p-2 border rounded"
+        className="flex-1 px-4 py-2 text-gray-800 placeholder-gray-400 transition border border-gray-300 rounded-lg bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-blue-400"
       />
 
       <button
         type="submit"
         disabled={loading}
-        className="px-4 py-2 text-white bg-blue-600 rounded disabled:opacity-50"
+        className="px-4 py-2 font-medium text-white transition bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Adicionar
+         {loading ? "..." : "Adicionar"}
       </button>
     </form>
   );

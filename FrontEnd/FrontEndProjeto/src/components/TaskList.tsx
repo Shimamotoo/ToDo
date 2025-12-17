@@ -13,7 +13,7 @@ export function TaskList({ tasks, onToggle, onDelete }: TaskListProps) {
   }
 
   return (
-    <ul>
+    <ul className="space-y-3">
       {tasks.map(task => (
         <TaskItem
           key={task.id}
