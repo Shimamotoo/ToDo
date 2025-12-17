@@ -12,10 +12,37 @@ function App() {
   // Cria um estado para controlar o carregamento inicial da aplicação
   const [loading, setLoading] = useState(true);
 
+  const [newTitle, setNewTitle] = useState("");
+
   //Assim que o componente é montado pela primeira vez ele roda "loadTasks"
   useEffect(() => {
     loadTasks();
   }, []);
+
+  const handleCreate = async (e: React.FormEvent) => {
+    //Previne que o navegador de um reload na pagina
+    //bagunçando os estados
+    e.preventDefault();
+
+    //Se o campo de input estiver não faz nada, tira os espaços em branco
+    if (!newTitle.trim()) return;
+
+    try {
+      //Método responsavel por chamar o taskService
+      //e enviar ao back-end o valor do input para manda o POST
+      const newTask = await taskService.create(newTitle);
+
+      //Pega o setado mais recente da array de tarefas antes de qualquer alteração
+      //então adiciona a nova tarefa que o back adicionou
+      setTasks(prev => [...prev, newTask]);
+
+      //Deixa em branco o campo para estar pronto para adicionar outra tarefa
+      setNewTitle("");
+    } catch (error) {
+      //Tratativa de erro
+      console.error(error);
+    }
+  };
 
   const handleToggle = async (id: number) => {
     try {
@@ -88,6 +115,24 @@ function App() {
   return(
     <div className="min-h-screen p-6 bg-gray-300">
       <h1 className="mb-4 text-3xl font-bold text-blue-600">Minhas tarefas</h1>
+
+      <form onSubmit={handleCreate} className="flex gap-2 mb-4">
+        <input
+          type="text"
+          value={newTitle}
+          onChange={e => setNewTitle(e.target.value)}
+          placeholder="Nova tarefa"
+          className="flex-1 p-2 border rounded"
+        />
+
+        <button
+          type="submit"
+          className="px-4 text-white bg-blue-600 rounded"
+        >
+          Adicionar
+        </button>
+      </form>
+
 
       <ul className="space-y-2">
         {tasks.map(task => (
